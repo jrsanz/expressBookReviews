@@ -51,19 +51,48 @@ public_users.get('/',function (req, res) {
 
 // Tarea 2:
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  const isbn = req.params.isbn
-  if (!isbn) {
-    return res.status(500).json({message: "ISBN requerido"});
-  }
+// public_users.get('/isbn/:isbn',function (req, res) {
+//   const isbn = req.params.isbn
+//   if (!isbn) {
+//     return res.status(500).json({message: "ISBN requerido"});
+//   }
 
-  const filtered_books = books[isbn]
-  if (filtered_books) {
-    return res.send(JSON.stringify(filtered_books))
-  }
-  else {
-    return res.send("No hay libros asociados al ISBN")
-  }
+//   const filtered_books = books[isbn]
+//   if (filtered_books) {
+//     return res.send(JSON.stringify(filtered_books))
+//   }
+//   else {
+//     return res.send("No hay libros asociados al ISBN")
+//   }
+// });
+
+// Tarea 11:
+// Get book details based on ISBN
+public_users.get('/isbn/:isbn',function (req, res) {
+  const getBooksByISBN = new Promise((resolve, reject) => {
+    const isbn = req.params.isbn
+    if (!isbn) {
+        reject("ISBN requerido")
+    }
+    if (books) {
+        const filtered_books = books[isbn]
+        if (filtered_books) {
+            resolve(filtered_books)
+        }
+        else {
+            reject("No hay libros asociados al ISBN")
+        }
+    }
+    else {
+        reject("No se encontraron libros")
+    }
+  })
+
+  getBooksByISBN.then((books) => {
+    res.send(JSON.stringify(books))
+  }).catch((error) => {
+    res.status(500).send(error)
+  })
 });
   
 // Tarea 3:
