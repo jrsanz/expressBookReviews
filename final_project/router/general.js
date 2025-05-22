@@ -26,8 +26,27 @@ public_users.post("/register", (req,res) => {
 
 // Tarea 1:
 // Get the book list available in the shop
+// public_users.get('/',function (req, res) {
+//   return res.send(JSON.stringify(books))
+// });
+
+// Tarea 10:
+// Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.send(JSON.stringify(books))
+  const getBooks = new Promise((resolve, reject) => {
+    if (books) {
+        resolve(books)
+    }
+    else {
+        reject("No se encontraron libros")
+    }
+  })
+
+  getBooks.then((books) => {
+    res.send(JSON.stringify(books))
+  }).catch((error) => {
+    res.status(500).send(error)
+  })
 });
 
 // Tarea 2:
@@ -45,7 +64,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
   else {
     return res.send("No hay libros asociados al ISBN")
   }
- });
+});
   
 // Tarea 3:
 // Get book details based on author
