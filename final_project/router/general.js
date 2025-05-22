@@ -143,19 +143,48 @@ public_users.get('/author/:author',function (req, res) {
 
 // Tarea 4:
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  const title = req.params.title
-  if (!title) {
-    return res.status(500).json({message: "Título requerido"});
-  }
+// public_users.get('/title/:title',function (req, res) {
+//   const title = req.params.title
+//   if (!title) {
+//     return res.status(500).json({message: "Título requerido"});
+//   }
 
-  const filtered_books = Object.values(books).filter(book => book.title === title)
-  if (filtered_books.length > 0) {
-    return res.send(JSON.stringify(filtered_books))
-  }
-  else {
-    return res.send("No hay libros asociados al título")
-  }
+//   const filtered_books = Object.values(books).filter(book => book.title === title)
+//   if (filtered_books.length > 0) {
+//     return res.send(JSON.stringify(filtered_books))
+//   }
+//   else {
+//     return res.send("No hay libros asociados al título")
+//   }
+// });
+
+// Tarea 13:
+// Get all books based on title
+public_users.get('/title/:title',function (req, res) {
+    const getBooksByTitle = new Promise((resolve, reject) => {
+        const title = req.params.title
+        if (!title) {
+           reject("Título requerido")
+        }
+        if (books) {
+            const filtered_books = Object.values(books).filter(book => book.title === title)
+            if (filtered_books.length > 0) {
+                resolve(filtered_books)
+            }
+            else {
+                reject("No hay libros asociados al título")
+            }
+        }
+        else {
+            reject("No se encontraron libros")
+        }
+    })
+    
+    getBooksByTitle.then((books) => {
+        res.send(JSON.stringify(books))
+    }).catch((error) => {
+        res.status(500).send(error)
+    })
 });
 
 // Tarea 5:
