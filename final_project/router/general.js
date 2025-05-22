@@ -97,19 +97,48 @@ public_users.get('/isbn/:isbn',function (req, res) {
   
 // Tarea 3:
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author
-  if (!author) {
-    return res.status(500).json({message: "Autor requerido"});
-  }
+// public_users.get('/author/:author',function (req, res) {
+//   const author = req.params.author
+//   if (!author) {
+//     return res.status(500).json({message: "Autor requerido"});
+//   }
 
-  const filtered_books = Object.values(books).filter(book => book.author === author)
-  if (filtered_books.length > 0) {
-    return res.send(JSON.stringify(filtered_books))
-  }
-  else {
-    return res.send("No hay libros asociados al autor")
-  }
+//   const filtered_books = Object.values(books).filter(book => book.author === author)
+//   if (filtered_books.length > 0) {
+//     return res.send(JSON.stringify(filtered_books))
+//   }
+//   else {
+//     return res.send("No hay libros asociados al autor")
+//   }
+// });
+
+// Tarea 12:
+// Get book details based on author
+public_users.get('/author/:author',function (req, res) {
+    const getBooksByAuthor = new Promise((resolve, reject) => {
+        const author = req.params.author
+        if (!author) {
+            reject("Autor requerido")
+        }
+        if (books) {
+            const filtered_books = Object.values(books).filter(book => book.author === author)
+            if (filtered_books.length > 0) {
+                resolve(filtered_books)
+            }
+            else {
+                reject("No hay libros asociados al autor")
+            }
+        }
+        else {
+            reject("No se encontraron libros")
+        }
+    })
+    
+    getBooksByAuthor.then((books) => {
+        res.send(JSON.stringify(books))
+    }).catch((error) => {
+        res.status(500).send(error)
+    })
 });
 
 // Tarea 4:
