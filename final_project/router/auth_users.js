@@ -40,10 +40,38 @@ regd_users.post("/login", (req,res) => {
   return res.send("Usuario logueado con éxito")
 });
 
+// Tarea 8:
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const user = req.session.authorization.username
+  const review = req.body.review
+  const isbn = req.params.isbn
+  console.log("A")
+
+  if (!user) {
+    return res.status(400).json({message: "Usuario no logueado"});
+  }
+  if (!review) {
+    return res.status(400).json({message: "Reseña requerida"});
+  }
+  if (!isbn) {
+    return res.status(400).json({message: "ISBN requerido"});
+  }
+
+  const filtered_books = books[isbn]
+  if (filtered_books) {
+    const filtered_reviews = books[isbn].reviews[user]
+    books[isbn].reviews[user] = review
+    if (filtered_reviews) {
+        return res.send("Reseña modificada con éxito")
+    }
+    else {
+        return res.send("Reseña creada con éxito")
+    }
+  }
+  else {
+    return res.send("No hay libros asociados al ISBN")
+  }
 });
 
 module.exports.authenticated = regd_users;
