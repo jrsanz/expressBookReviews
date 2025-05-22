@@ -46,7 +46,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   const user = req.session.authorization.username
   const review = req.body.review
   const isbn = req.params.isbn
-  console.log("A")
 
   if (!user) {
     return res.status(400).json({message: "Usuario no logueado"});
@@ -72,6 +71,35 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   else {
     return res.send("No hay libros asociados al ISBN")
   }
+});
+
+// Tarea 9:
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const user = req.session.authorization.username
+    const isbn = req.params.isbn
+  
+    if (!user) {
+      return res.status(400).json({message: "Usuario no logueado"});
+    }
+    if (!isbn) {
+      return res.status(400).json({message: "ISBN requerido"});
+    }
+  
+    const filtered_books = books[isbn]
+    if (filtered_books) {
+      const filtered_reviews = books[isbn].reviews[user]
+      delete books[isbn].reviews[user]
+      if (filtered_reviews) {
+          return res.send("Reseñas eliminadas con éxito")
+      }
+      else {
+          return res.send("No hay reseñas por eliminar")
+      }
+    }
+    else {
+      return res.send("No hay libros asociados al ISBN")
+    }
 });
 
 module.exports.authenticated = regd_users;
