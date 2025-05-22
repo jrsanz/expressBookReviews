@@ -10,15 +10,27 @@ public_users.post("/register", (req,res) => {
   return res.status(300).json({message: "Yet to be implemented"});
 });
 
+// Tarea 1:
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   return res.send(JSON.stringify(books))
 });
 
+// Tarea 2:
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn
+  if (!isbn) {
+    return res.status(500).json({message: "ISBN requerido"});
+  }
+
+  const filtered_books = books[isbn]
+  if (filtered_books) {
+    return res.send(JSON.stringify(filtered_books))
+  }
+  else {
+    return res.send("No hay libros asociados al ISBN")
+  }
  });
   
 // Get book details based on author
