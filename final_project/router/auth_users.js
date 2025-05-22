@@ -15,13 +15,29 @@ const isValid = (username)=>{ //returns boolean
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-//write code to check if username and password match the one we have in records.
+    const filtered_users = Object.values(users).filter(user => user.username === username && user.password === password)
+    return filtered_users.length == 1 ? true : false
 }
 
+// Tarea 7:
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const username = req.body.username
+  const password = req.body.password
+  if (!username || !password) {
+    return res.status(400).json({message: "Usuario y contraseña requeridos"});
+  }
+
+  if (!authenticatedUser(username, password)) {
+    return res.status(400).json({message: "Usuario o contraseña incorrectos"});
+  }
+
+  const token = jwt.sign({data: password}, "access", {expiresIn: 60 * 60})
+  req.session.authorization = {
+    token, username
+  }
+
+  return res.send("Usuario logueado con éxito")
 });
 
 // Add a book review
