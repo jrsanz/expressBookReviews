@@ -36,7 +36,6 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // Tarea 3:
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  //Write your code here
   const author = req.params.author
   if (!author) {
     return res.status(500).json({message: "Autor requerido"});
@@ -53,8 +52,18 @@ public_users.get('/author/:author',function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const title = req.params.title
+  if (!title) {
+    return res.status(500).json({message: "Título requerido"});
+  }
+
+  const filtered_books = Object.values(books).filter(book => book.title === title)
+  if (filtered_books.length > 0) {
+    return res.send(JSON.stringify(filtered_books))
+  }
+  else {
+    return res.send("No hay libros asociados al título")
+  }
 });
 
 //  Get book review
