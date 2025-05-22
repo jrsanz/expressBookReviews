@@ -1,13 +1,27 @@
 const express = require('express');
 let books = require("./booksdb.js");
+let userExists = require("./auth_users.js").userExists;
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
+// Tarea 6:
 public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const username = req.body.username
+  const password = req.body.password
+  if (!username || !password) {
+    return res.status(500).json({message: "Usuario y contraseña requeridos"});
+  }
+
+  if (userExists(username)) {
+    return res.status(500).json({message: "El nombre de usuario ya existe"});
+  }
+
+  users.push({
+    "username": username,
+    "password": password
+  })
+  return res.send("Usuario registrado con éxito")
 });
 
 // Tarea 1:
